@@ -1,17 +1,7 @@
-package es.poketroll.coletor.main;
+package es.poketroll.collector.main;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.net.URLConnection;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-
-
-
-
-
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,9 +10,11 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import es.poketroll.collector.bean.NoticiaBean;
+
 public class Start {
 	private static final String BUSQUEDA = "pokemon-go";
-
+	public static List<NoticiaBean> noticias = new ArrayList<NoticiaBean>();
 	public static void main(String[] args) throws Exception {
 		try{
 			String google = "http://www.google.com/search?q=";
@@ -57,13 +49,24 @@ public class Start {
 			    
 			    Elements imagenes = cuerpoNoticia.select(".article-asset-image img");
 			    for(Element imagen : imagenes){
-			    	linkImagenes.add(imagen.attr("src"));
-			    }			    
-			    System.out.println("\n\n\nTitulo Pagina  - "+tituloResultadoBusqueda);
-			    System.out.println("\tTitulo Noticia - "+tituloNoticia);
-			    System.out.println("\t\tTexto cuerppo   - "+cuerpoNoticia.text());
-			   // System.out.println("--- HTML cuerppo   - "+htmlCuerpoNoticia);
-			    System.out.println("\t\t\tImagenes cuerppo   - "+linkImagenes);
+			    	String src = imagen.attr("src");
+			    	if (!"".equals(src)){
+			    		linkImagenes.add(src);
+			    	}
+			    	
+			    }
+			    NoticiaBean noticia = new NoticiaBean();
+			    
+			    noticia.setUrl(url);
+			    noticia.setTituloGoogle(title);
+			    noticia.setTituloHTML(tituloResultadoBusqueda);
+			    noticia.setHtmlNoticia(htmlCuerpoNoticia);
+			    noticia.setTextoNoticia(cuerpoNoticia.text());
+			    noticia.setImagenesNoticia(linkImagenes);
+			    
+			    noticias.add(noticia);
+			    
+			    System.out.println(noticias);
 			    
 			}
 		}catch(Exception ex){
